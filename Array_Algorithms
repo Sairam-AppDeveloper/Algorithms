@@ -1,0 +1,45 @@
+import Foundation
+
+protocol ArrayProtocol {
+    func minElement(_ array: [Int]) -> Int?
+    func maxElement(_ array: [Int]) -> Int?
+}
+
+extension ArrayProtocol {
+    /// Returns the minimum integer value if provided array contains atleast one integer value otherwise returns `nil`.
+    func minElement(_ array: [Int]) -> Int? {
+        // If array is empty then retun nil.
+        guard var minimum = array.first else {
+            return nil
+        }
+        // Loop through elements and get the minimum value.
+        for element in array {
+            minimum = element < minimum ? element : minimum
+        }
+        return minimum
+    }
+    
+    /// Returns the maximum integer value if provided array contains atleast one integer value otherwise returns `nil`.
+    func maxElement(_ array: [Int]) -> Int? {
+    // If array is empty then retun nil.
+        guard var maximum = array.first else {
+            return nil
+        }
+        // Loop through elements and get the maximum value.
+        for element in array {
+            maximum = element > maximum ? element : maximum
+        }
+        return maximum
+    }
+}
+
+class myClass: ArrayProtocol {
+    
+    func test()  {
+        let array = [ 8, 3, 9, 4, 6 ]
+        print(minElement(array))   // This will return 3
+        print(maxElement(array))   // This will return 9
+        
+    }
+    
+}

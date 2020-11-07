@@ -1,0 +1,33 @@
+import Foundation
+
+/// Returns list of available set of positive and its opposite numbers.
+func filterPositiveAndItsOppositeNumbers(from array:[Int]) -> [[Int]] {
+    // Remove the duplicates and zeros from input.
+    var inputArray = Set(array.filter { $0 != 0 })
+    
+    // Maintain a array to store the set of positive and its opposite numbers.
+    var finalArray = Set<[Int]>()
+    
+    // Filter the list of available set of positive and its opposite numbers.
+    inputArray.filter { (number1) in
+         inputArray.dropFirst().filter { (number2) in
+            // Check if the sum of two numbers is equals to `0` to check they are opposite to each other.
+            if number1 + number2 == 0 {
+                // Save the set of positive and its opposite number.
+                finalArray.insert([number1, number2].sorted())
+            }
+            return true
+         }
+         return true
+    }
+    
+    // Return final array.
+    return Array(finalArray)
+}
+
+// *** USE CASE *** //
+
+let array =  [-7, 4, -3, 4, 4, 2, 2, -8, -2, 3, 3, 7, -2, 3, 2, -4, -4, -4, 0]
+let result = filterPositiveAndItsNegativeNumbers(from: array)
+print("Set of Positive and its Npposite Numbers are: \(result)) ")
+// Prints  --> [[-2, 2], [-3, 3], [-4, 4], [-7, 7]]

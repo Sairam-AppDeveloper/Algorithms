@@ -1,0 +1,33 @@
+import Foundation
+
+/// Returns the equilibrium index where sum of elements at lower indexes is equals to that of higher indexes.
+func findEquilibriumIndex(array: [Int]) -> Int? {
+    // Maintain a variable to store the sum of lower indexes (Start the lower indexes from index `0`)
+    var leftSum = 0
+    // Maintain a variable to store the sum of higher indexes (Start the higher indexes from index `0`)
+    var rightSum = array.reduce(0, +)
+    
+    // Loop through all elements to find the equilibrium index
+    for (index, value) in array.enumerated() {
+        // Update the sum by removing the element value
+        rightSum = rightSum - value
+        // Check if the total sum and left sum are equal to return the equilibrium index
+        if rightSum == leftSum { return index }
+        // Else update the left sum for future iteration
+        else { leftSum = leftSum + value }
+    }
+    // Return `nil` if there is no equilibrium index
+    return nil
+}
+
+
+
+
+// * USE CASE * //
+
+let array =  [-7, 1, 5, 2, 1, 2, -4, 3, 100]
+if let equilibriumIndex = findEquilibriumIndex(array: array) {
+    print("OutPut - \(equilibriumIndex)")
+} else {
+    print("No equilibrium index is found!")
+}

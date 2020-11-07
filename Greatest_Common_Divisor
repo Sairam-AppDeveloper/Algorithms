@@ -1,0 +1,58 @@
+import Foundation
+
+// ** GREATEST COMMON DIVISOR ** //
+
+// GCD of two numbers 
+/// Returns the greatest common divisor (positive) for the provided integers
+func findGreatestCommonDivisor(_ a: Int, _ b: Int) -> Int {
+    // Get the minimum and maximum values from provided inputs
+    var minimum = min(a, b)
+    var maximum = max(a, b)
+    
+    while minimum != 0 {
+        (maximum, minimum) = (minimum, maximum % minimum)
+    }
+    
+    // Return the greatest common divisor (positive)
+    return abs(maximum)
+}
+// ** USE CASE * //
+print(findGreatestCommonDivisor(30, 15))
+print(findGreatestCommonDivisor(30, -15))
+
+
+
+// GCD of array of numbers
+/// Returns the greatest common divisor (positive) for the provided array of integers
+func findGreatestCommonDivisor(_ array: [Int]) -> Int { 
+    // Loop through each element and find the greatest common divisor
+    return array.reduce(0) { findGreatestCommonDivisor($0, $1)
+}
+// ** USE CASE * //
+print(findGreatestCommonDivisor([54, 27, 18, 36]))
+print(findGreatestCommonDivisor([54, 27, 18, -36]))
+
+
+
+
+
+// ** LEAST COMMON MULTIPLIER ** //
+
+// LCM of two numbers:
+///  Calculates the lcm for two given numbers using `findGreatetCommonDivisor` algorithm.
+func leastCommonMultiple(_ a : Int, _  b : Int) -> Int {
+    return (a / findGreatestCommonDivisor(a, b)) * b
+}
+// ** USE CASE * //
+print( leastCommonMultiple(2, 3))  // 6
+
+
+
+// LCM of array of numbers:
+/// Calculates the lcm for given array of numbers using `findGreatetCommonDivisor` algorithm.
+func leastCommonMultiple(_ array : [Int]) -> Int {
+    return array.reduce(1) { leastCommonMultiple($0, $1) }
+}
+// ** USE CASE * //
+print( leastCommonMultiple([2, 3, 4]))  // 12
+

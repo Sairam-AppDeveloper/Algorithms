@@ -1,0 +1,48 @@
+import Foundation
+
+/// Generic method that returns all possible combinations in which each combination's length is equals to the provided combination length.
+func combinations<T>(of array: [T], withCombinationLength combinationLength: Int) -> [[T]] {
+    // If array count and combination length are equal, then return the same array.
+    if(array.count == combinationLength) { return [array] }
+    
+    // If array is empty or combination length is zero, then return empty array.
+    if(array.isEmpty || combinationLength == 0) { return [] }
+    
+    // If combination length is 1, then return each element as an array.
+    if(combinationLength == 1) { return array.map { [$0] } }
+    
+    // Maintain an array for result
+    var result : [[T]] = []
+    
+    // Take array slice from index `1`
+    let rest = Array(array.suffix(from: 1))
+    // Perform recurssive operation to get all possible combinations
+    let subCombos = combinations(of: rest, withCombinationLength: combinationLength - 1)
+    result += subCombos.map { [array[0]] + $0 }
+    result += combinations(of: rest, withCombinationLength: combinationLength)
+    
+    // Return the resuled combinations
+    return result
+}
+
+// Filters the given input array and returns all possible triplets whose sum of elements is less than provided maximum sum.
+func findTriplets(of array: [Int], withCombinationMaxSum maxSum: Int) -> [[Int]] {
+    // Get triplet combinations(send combination length is equal to 3 to get triplets)
+    let triplets = combinations(of: array, withCombinationLength: 3)
+    // Filter each triplet and capture which meets the maximum sum condition
+    return triplets.filter { $0.reduce(0, +) < maxSum }
+}
+
+// *** USE CASE *** //
+
+let inputArray =   [5, 1, 3, 4, 7] //[-2, 0, 1, 3]//
+let sum = 9
+
+let outputArray = findTriplets(of: inputArray, withCombinationMaxSum: sum)
+print("Output: \(outputArray.count)")
+if outputArray.count > 0 {
+    print("Detailed Results : Below are triplets with sum less than \(sum) - \(outputArray)")
+} else {
+    print("Detailed Results : Can’t find suitable result")
+}
+

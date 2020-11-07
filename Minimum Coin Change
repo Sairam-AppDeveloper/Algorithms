@@ -1,0 +1,42 @@
+import Foundation
+
+extension Array where Element == Int {
+    /// Returns minimum number of coin change availage for provided cent
+    func minimumCoinChangeAvailable(for cent: Int) -> [Int]? {
+        // Maintain an array to store best combo array
+        var bestComboArray = [Int]()
+        // Consider cent as remainder
+        var remainder = cent
+        
+        /// Calculates and appends best combination change for currect remainder
+        func calculateHigherLevelCombinationsForRemainder() {
+            // Get nearest higher cent for remainder
+            if let nearestCent = self.last(where: { $0 <= remainder } ) {
+                // Calculate required number of nearest higher cents and the remaining cent
+                // - Vars:
+                //   count - required number of nearest higher cents
+                //   R - remaining cents after removing # number of nearest higher cents
+                let (count, R) = (remainder/nearestCent, remainder % nearestCent)
+                bestComboArray.append(contentsOf: Array(repeating: nearestCent, count: count))
+                // Update the remainder for nest iteration
+                remainder = R
+            }
+        }
+        
+        // If remainder is greater than 0 then calculate higher level combinations for remainder
+        while remainder > 0 {
+            calculateHigherLevelCombinationsForRemainder()
+        }
+        
+        return bestComboArray
+    }
+}
+
+
+// *  USE CASE  * //
+
+let coinSet = [1, 2, 5, 10, 20, 50, 100]
+if let result = coinSet.minimumCoinChangeAvailable(for: 101) {
+    print(result)  // [100, 1]
+}
+

@@ -1,0 +1,61 @@
+import Foundation
+
+// MARK: Array Extension
+extension Array where Element == String {
+   
+   /// Returns array of all combinations from given array elements.
+   func combinations() -> [String] {
+        // If array is empty, then do nothing.
+        if self.count == 0 { return [] }
+        
+        // Concatenate all combinations that can be built with element `i` at the first place, where `i` runs through all array indices.
+        return self.indices.flatMap { i -> [String] in
+            // Pick element `i` and remove it from the array.
+            var arrayMinusOne = self
+            let element = arrayMinusOne.remove(at: i)
+            
+            // Prepend element to all combinations of the smaller array.
+            return Array(Set([element] + arrayMinusOne.combinations().map { element + $0 }))
+        }
+    }
+}
+
+// MARK:- String Extension
+extension String {
+
+    // MARK - Anagram
+    
+    /// Checks and returns `true` if the provided string is an anagram else returns `false`.
+    ///   - For example,
+    ///   print("ABC".isAnagram(with :"CBA"))
+    ///   Output : `true`
+    func isAnagram(with string: String) -> Bool {
+        return self.lowercased().sorted() == string.lowercased().sorted()
+    }
+    
+    /// Generates all possible anagrams with case insensitive.
+    ///     - For example,
+    ///   let inputString = "AaA"
+    ///   print(inputString.generateAnagramsWithCaseInsensitive())
+    ///   Output : [aaa]
+    func generateAnagramsWithCaseInsensitive() -> [String] {
+        return self.lowercased().generateAnagrams()
+    }
+    
+    /// Generates all possible anagrams.
+    ///     - NOTE: This is Case Sensitive.
+    ///     - Example - 1
+    ///   let inputString = "ABC"
+    ///   print(inputString.generateAnagrams())
+    ///   Output : ["CAB", "CBA", "ABC", "ACB", "BAC", "BCA"]
+    ///     - Example - 2
+    ///   let inputString = "AaA"
+    ///   print(inputString.generateAnagrams())
+    ///   Output : ["AAa", "aAA", "AaA"]
+    func generateAnagrams() -> [String] {
+        // Convert string to array for string elements.
+        let inputArray = Array(self).map { String($0) }
+        // Filter the combinations, whose count is equals to the input string count.
+        return inputArray.combinations().filter { $0.count == inputArray.count }
+    }
+}

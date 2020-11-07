@@ -1,0 +1,32 @@
+import Foundation
+ 
+/// Finds and prints the longest contiguous sub-array from provided array.
+func findLongestContiguousSubArray(_ array: [Int]) {
+    // Initialize result
+    var max_len = 1;  
+    for i in 0..<array.count-1
+    { 
+        // Initialize min and max for all subarrays starting with i 
+        var mn = array[i]
+        var mx = array[i]
+  
+        // Consider all subarrays starting with i and ending with j 
+        for j in i+1..<array.count
+        { 
+            // Update min and max in this subarray if needed 
+            mn = Swift.min(mn, array[j]) 
+            mx = Swift.max(mx, array[j]) 
+  
+            // If current subarray has all contiguous elements 
+            if ((mx - mn) == j-i) {
+                max_len = Swift.max(max_len, mx-mn+1);
+            }
+        } 
+    } 
+        
+    print("Length of the longest contiguous subarray is \(max_len)") 
+}
+
+let arr =  [1, 56, 58, 57, 89, 90, 92, 91, 60, 94, 93, 45]
+findLongestContiguousSubArray(arr)
+// prints -> "Length of the longest contiguous subarray is 4" 

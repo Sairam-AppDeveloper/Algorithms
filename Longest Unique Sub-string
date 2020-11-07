@@ -1,0 +1,115 @@
+import Foundation
+
+// Approach - 1 ( Finds array of all combinations of string elements and returns the combinations which are sub-strings of given input string )
+
+// MARK: Array Extension
+extension Array where Element == String {
+   
+   /// Finds array of all combinations of string elements and returns the combinations which are sub-strings of given input string.
+   func uniqueSubStringCombinations(of input: String) -> [String] {
+        // If array is empty, then do nothing.
+        if self.count == 0 { return [] }
+        
+        // Concatenate all combinations that can be built with element `i` at the first place, where `i` runs through all array indices.
+        return self.indices.flatMap { i -> [String] in
+            // Pick element `i` and remove it from the array.
+            var arrayMinusOne = self
+            let element = arrayMinusOne.remove(at: i)
+            
+            // Get combinations of element and append next iteration combinations
+            var combinations = Set([element] + arrayMinusOne.uniqueSubStringCombinations(of: input).map { element + $0 })
+                
+            // Filter the combinations which are sub-strings of given input 
+            combinations = combinations.filter { input.contains($0) }
+            
+            // Prepend element to all combinations of the smaller array.
+            return Array(combinations)
+        }
+    }
+}
+
+/// Finds and returns the longest uniuqe sub-strings from the given input string. Returns `nil` if found none.
+func findLongestUniqueSubstrings(from input: String) -> [String]? {
+// Return nil there is no input string
+    if input.isEmpty { return nil }
+    
+    // Store the unique characters in the same succeeding order 
+    var inputSet = Set<Character>()
+    let uniqueSubString = input.filter{ inputSet.insert($0).inserted }
+    
+    // Get the longest uniuqe sub-strings 
+    var combinations = Array(uniqueSubString) // taking unique characters as array of characters
+                            .map { String($0) } // Converting characters into string elements
+                            .uniqueSubStringCombinations(of: input) // finding array of uniuqe sub-strings combinations
+    
+    if !combinations.isEmpty {
+        // Sort the combinations by the count
+        combinations = combinations.sorted { $0.count > $1.count }
+        // Return all the longest uniuqe sub-strings 
+        return combinations.filter { $0.count == combinations.first!.count }
+    }
+    
+    // Retrun `nil` if found nothing.
+    return nil
+}
+
+// *** USE CASE *** //
+
+
+let input = "abcxyzabc"
+if let longestUniuqeSubstrings = findLongestUniqueSubstrings(from: input) {
+    print ("The answer is - \(longestUniuqeSubstrings), with the length of \(longestUniuqeSubstrings.first!.count).")
+} else {
+    print("No Longest Uniuqe Substring Found!")
+}
+
+
+
+// Approach - 2 ( Looping through each index and checking the existence of left and right portions in the given string )
+
+/// Finds and returns the longest uniuqe sub-strings from the given input string. Returns `nil` if found none.
+func findLongestUniqueSubstrings(from input: String) -> [String]? {
+    // Return nil there is no input string
+    if input.isEmpty { return nil }
+    
+    // Store the unique characters in the same succeeding order 
+    var set = Set<Character>()
+    let uniqueCharacters = input.filter{ set.insert($0).inserted }
+    
+    // Maintain a variable to store the output sub-strings
+    var subStrings = [String]()
+    
+    // Loop through each index to find the matched sub-strings
+    for i in 0...uniqueCharacters.count-1 {
+        // From the index take the left portion
+        let leftPortion = String(uniqueCharacters.prefix(i))
+        // If the left portion is a part of input string, then save it.
+        if input.contains(leftPortion) { subStrings.append(leftPortion) }
+        
+        // From index take the right portion
+        let rightPortion = String(uniqueCharacters.dropFirst(i))
+        // If the right portion is a part of input string, then save it.
+        if input.contains(rightPortion) { subStrings.append(rightPortion) }
+    }
+    
+    // Check if there are any matches
+    if !subStrings.isEmpty {
+        // Sort the matches by the count
+        subStrings = subStrings.sorted { $0.count > $1.count }
+        // Return all the longest uniuqe sub-strings 
+        return subStrings.filter { $0.count == subStrings.first!.count }
+    }
+    
+    // Retrun `nil` if found nothing.
+    return nil
+}
+
+
+// * USE CASE * // (NOTE: DON'T FORGET to comment the un-used method since both the approaches have the same name. )
+
+let input = "abcabxyzyz123"
+if let longestUniuqeSubstrings = findLongestUniqueSubstrings(from: input) {
+    print ("The answer is - \(longestUniuqeSubstrings), with the length of \(longestUniuqeSubstrings.first!.count).")
+} else {
+    print("No Longest Uniuqe Substring Found!")
+}

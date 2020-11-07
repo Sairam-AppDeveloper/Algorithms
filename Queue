@@ -1,0 +1,124 @@
+import Foundation
+
+/// A regular Queue/Deck adds elements to the back and removes from the front in FIFO order.
+class Queue<T: Equatable> {
+    // MARK: Initialisations
+    init() {}
+
+    convenience init(elements: [T]) {
+        self.init()
+        self.elements = elements
+    }
+    
+    // MARK: Properties
+    // Variable that contains all the elements of the queue
+    var elements: [T] = []
+    
+    // MARK: Computed Properties
+    /// Front element of the queue
+    var front: T? {
+        return self.elements.first
+    }
+    
+    /// Rear element of the queue 
+    var rear: T? {
+        return self.elements.last
+    }
+    
+    // MARK: Methods
+    /// Checks if the queue is empty. Returns `true` if the queue has no elements else returns `false`.
+    func isEmpty() -> Bool {
+        return self.elements.isEmpty
+    }
+    
+    /// Enqueue the provided element to the rear of the queue
+    func enqueue(_ element: T) {
+        self.enqueueBack(element)
+    }
+    
+    /// Enqueue the provided element at the front of the queue (i.e., at zero index)
+    func enqueueFront(_ element: T) {
+        self.elements.insert(element, at: 0)
+    }
+    
+    /// Enqueue the provided element at the rear of the queue (i.e., at the end)
+    func enqueueBack(_ element: T) {
+        self.elements.append(element)
+    }
+    
+    /// Dequeue the front element from the queue and return the element
+    func dequeue() -> T? {
+        return self.dequeueFront()
+    }
+    
+    /// Dequeue the front element from the queue and return the element
+    func dequeueFront() -> T? {
+        if let _ = self.front {
+            return self.elements.removeFirst()
+        } else {
+            print("There is no element at front to remove")
+            return nil
+        }
+    }
+    
+    /// Dequeue the rear element from the queue and return the element
+    func dequeueBack() -> T? {
+        if let _ = self.rear {
+            return self.elements.removeLast()
+        } else {
+            print("There is no element at back to remove")
+            return nil
+        }
+    }
+    
+}
+
+// MARK: CustomStringConvertible
+// For readability purpose
+extension Queue: CustomStringConvertible {
+    var description: String {
+        return "[\(self.elements.map( { "\($0)" } ).joined(separator: ","))]"
+    }
+}
+
+
+
+
+// * USE CASE * //
+let queue = Queue<Int>(elements: [10, 5, 11, 13])  // (or)  Queue<Int>() 
+// queue.enqueue(6)
+// queue.enqueueFront(2)
+// queue.enqueue(15)
+// queue.enqueue(21)
+
+
+print("queue                            - \(queue)\n")
+
+if let last = queue.dequeue() {
+    print("Element that is ready to dequeue - \(last)\n")
+    print("queue after dequeuing            - \(queue)\n")
+}
+
+if let first = queue.dequeueFront() {
+    print("Element that is at the front is  - \(first)\n")
+    print("queue after dequeuing at front   - \(queue)\n")
+}
+
+if let back = queue.dequeueBack() {
+    print("Element that is at the back is   - \(back)\n")
+    print("queue after dequeuing at back    - \(queue)\n")
+}
+
+
+if let last = queue.dequeue() {
+    print("Element that is ready to dequeue - \(last)\n")
+    print("queue after dequeuing            - \(queue)\n")
+}
+if let last = queue.dequeueBack() {
+    print("Element that is ready to dequeue - \(last)\n")
+    print("queue after dequeuing            - \(queue)\n")
+}
+if let last = queue.dequeueFront() {
+    print("Element that is ready to dequeue - \(last)\n")
+    print("queue after dequeuing            - \(queue)\n")
+}

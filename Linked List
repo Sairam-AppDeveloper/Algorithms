@@ -1,0 +1,306 @@
+import Foundation
+
+/// A generic linked list's node that can hold arbitrary types
+public class LinkedListNode<T: Equatable> {
+    var value: T
+    var next: LinkedListNode?
+    weak var previous: LinkedListNode?
+    
+    init(value: T) {
+        self.value = value
+    }
+}
+
+extension LinkedListNode: Equatable {
+    public static func == (lhs: LinkedListNode<T>, rhs: LinkedListNode<T>) -> Bool {
+        return lhs.value == rhs.value
+    }
+    
+    public static func != (lhs: LinkedListNode<T>, rhs: LinkedListNode<T>) -> Bool {
+        return lhs.value != rhs.value
+    }
+}
+
+enum LinkedListType {
+     case Singly, Doubly
+}
+
+/// The Linked List protocol provides default implementations for basic operations of a linked list (like head, append, remove, count)
+protocol LinkedListProtocol {
+    associatedtype T: Equatable
+    
+    /// Tells the type of linked list (Singly or Double)
+    var linkedListType: LinkedListType? { get }
+    
+    /// The head of the Linked List
+    var head: Node? { get set }
+}
+
+extension LinkedListProtocol {
+    
+    /// Typealiasing the node class to increase readability of code
+    typealias Node = LinkedListNode<T>
+    
+    /// Computed property to check if the linked list is empty
+    public var isEmpty: Bool {
+        return head == nil
+    }
+    
+    /// Computed property to iterate through the linked list and return the total number of nodes
+    public var count: Int {
+        guard var node = head else {
+            return 0
+        }
+        
+        var count = 1
+        while let next = node.next {
+            node = next
+            count += 1
+        }
+        return count
+    }
+    
+    /// Computed property to iterate through the linked list and return the last node in the list (if any)
+    public var last: Node? {
+        guard var node = head else {
+            return nil
+        }
+        
+        while let next = node.next {
+            node = next
+        }
+        return node
+    }
+    
+    /// Append a copy of a LinkedListNode to the end of the list.
+    ///
+    /// - Parameter node: The node containing the value to be appended
+    public mutating func append(_ node: Node) {
+        let newNode = node
+        if let lastNode = last {
+            newNode.previous = self.linkedListType == .Doubly ? lastNode : nil
+            lastNode.next = newNode
+        } else {
+            head = newNode
+        }
+    }
+    
+    /// Append a value to the end of the list
+    ///
+    /// - Parameter value: The data value to be appended
+    public mutating func append(_ value: T) {
+        let newNode = Node(value: value)
+        append(newNode)
+    }
+    
+    /// Function to return the node at a specific index. Returns `nil` if index is out of bounds
+    ///
+    /// - Parameter index: Integer value of the node's index to be returned
+    /// - Returns: LinkedListNode
+    public func node(at index: Int) -> Node? {
+        if head == nil {
+            print("List is empty.")
+            return nil
+        }
+        
+        // assert(index >= 0, "index must be greater or equal to 0")
+        if index < 0 {
+            print("index must be greater or equal to 0")
+            return nil
+        }
+        
+        if index == 0 {
+            return head
+        } else {
+            var node = head!.next
+            for _ in 1..<index {
+                node = node?.next
+                if node == nil {
+                    break
+                }
+            }
+            
+            if node == nil {
+                print("index is out of bounds.")
+                return nil
+            }
+            
+            return node!
+        }
+    }
+    
+    /// Removes and returns the passed node from specified index.
+    public mutating func remove(node: Node, index: Int) -> Node {
+        let prev = index == 0 ? nil : self.node(at: index-1)
+        let next = node.next
+        
+        if let prev = prev {
+            prev.next = next
+        } else {
+            head = next
+        }
+        next?.previous = self.linkedListType == .Doubly ? prev : nil
+        node.previous = nil
+        node.next = nil
+        return node
+    }
+    
+    /// Removes and returns the node from specified index.
+    public mutating func remove(at index: Int) -> Node? {
+        if let node = self.node(at: index) {
+            return remove(node: node, index: index)
+        }
+        return nil
+    }
+}
+
+
+// MARK: - An extension with an implementation of `contains`, 'map' & 'filter' functions
+extension LinkedListProtocol {
+    public func contains(_ linkedListNode: LinkedListNode<T>) -> Bool {
+        var node = head
+        while let nd = node {
+            if linkedListNode != nd {
+                node = nd.next
+            } else {
+                return true
+            }
+        }
+        return false
+    }
+    
+    public func map<U>(transform: (T) -> U) -> DoublyLinkedList<U> {
+        var result = DoublyLinkedList<U>()
+        var node = head
+        while let nd = node {
+            result.append(transform(nd.value))
+            node = nd.next
+        }
+        return result
+    }
+    
+    public func filter(predicate: (T) -> Bool) -> DoublyLinkedList<T> {
+        var result = DoublyLinkedList<T>()
+        var node = head
+        while let nd = node {
+            if predicate(nd.value) {
+                result.append(nd.value)
+            }
+            node = nd.next
+        }
+        return result
+    }
+}
+
+/// Singly linked list that conforms to `LinkedListProtocol`.
+public class SinglyLinkedList<T: Equatable>: LinkedListProtocol {
+    /// Set linked list type as `Singly.
+    private(set) var linkedListType: LinkedListType? = .Singly
+    
+    var head: LinkedListNode<T>?
+    
+}
+
+/// Doubly linked list that conforms to `LinkedListProtocol`.
+public class DoublyLinkedList<T: Equatable>: LinkedListProtocol {
+    /// Set linked list type as `Doubly`.
+    private(set) var linkedListType: LinkedListType? = .Doubly
+    
+    var head: LinkedListNode<T>?
+    
+}
+
+// MARK: - Extension to enable the standard conversion of a list to String
+extension DoublyLinkedList: CustomStringConvertible {
+    public var description: String {
+        var s = "["
+        var node = head
+        while let nd = node {
+            s += "\(nd.value)"
+            node = nd.next
+            if node != nil { s += ", " }
+        }
+        return s + "]"
+    }
+}
+
+extension SinglyLinkedList: CustomStringConvertible {
+    public var description: String {
+        var s = "["
+        var node = head
+        while let nd = node {
+            s += "\(nd.value)"
+            node = nd.next
+            if node != nil { s += ", " }
+        }
+        return s + "]"
+    }
+}
+
+
+
+// ** USE CASE ** //
+
+// func checkListStatus(at index: Int) {
+//     if let currentNode = list.node(at: index) {
+//     print("Node value at index \(index) is : \(currentNode.value)")
+
+//     if let previousNode = currentNode.previous {
+//         print("Previous node value is : \(previousNode.value)")
+//     } else {
+//         print("There is no previous node")
+//     }
+
+//     if let nextNode = currentNode.next {
+//         print("Next node value is : \(nextNode.value)")
+//     } else {
+//         print("There is no next node")
+//     }
+//     print("\nlist.count : \(list.count)")
+//     print("____________________")
+//     }
+// }
+
+
+var list = SinglyLinkedList<Int>() // Initializes as a Singly list
+// var var list = DoublyLinkedList<Int>() // Initializes as a Doubly linked list
+list.append(4)
+list.append(1)
+list.append(8)
+list.append(4)
+list.append(5)
+list.append(700)
+list.append(41)
+list.append(51)
+list.append(7001)
+
+var list2 = SinglyLinkedList<Int>() // Initializes as a Singly list
+// var var list = DoublyLinkedList<Int>() // Initializes as a Doubly linked list
+list2.append(5)
+list2.append(0)
+list2.append(1)
+list2.append(8)
+list2.append(4)
+list2.append(5)
+list2.append(700)
+list2.append(800)
+
+
+let listOfCommonElements = list.filter { (node1) in
+    return list2.contains(LinkedListNode(value: node1))
+}
+print(listOfCommonElements.map { $0 })
+
+
+// print("\(type(of: list)) elements: \(list) \n \n")
+
+// let index = 1
+// print("Checking list status at index: \(index) \n")
+// checkListStatus(at: index)
+
+// print("\n\n--- Checking Remove functionality ---\n")
+// if let removedNode = list.remove(at: index) {
+//     print("removed node value: \(removedNode.value)\n")
+//     print("Elements after deletion: \(list) \n \n")
+//     checkListStatus(at: index)
+// }

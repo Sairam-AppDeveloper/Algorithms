@@ -1,0 +1,33 @@
+import Foundation
+
+/// Returns nth fibonacci number with fibonacci series
+func fibonacciNumberWithSeries(ofLength n: Int) -> (Int, [Int])? {
+    // If length is less than or equal to 0, then return nil
+    if n <= 0 { return nil }
+    
+    // Take the series for default first two numbers
+    var series: [Int] = [0, 1]
+    
+    // If provided length is 1, then return first element
+    if n == 1 { return (series[0], Array(series.dropLast())) }
+    
+    // If provided length is 2, then return default series
+    if n == 2 { return (series.last!, series) }
+    
+    // Loop through the length and append the next possible elements
+    (2...n-1).forEach { i in 
+        series.append(series[i - 1] + series[i - 2]) 
+    }
+    
+    // Return the nth fibonacci number and the entire series
+    return (series.last!, series)
+}
+
+
+// * USE CASE * //
+let length = 21
+if let (number, series) = fibonacciNumberWithSeries(ofLength: length) {
+    print("\(length)th Fibonacci Number is - \(number) \nwith Series - \(series)")
+} else {
+    print("No Fibonacci Series is found")
+}
